@@ -1,0 +1,13 @@
+name = "jagtag"
+type = "javascript"
+account_id = ""
+workers_dev = true
+route = ""
+zone_id = ""
+webpack_config = "webpack.config.js"
+
+vars = { DISCORD_NACL_PUBLIC_KEY = "CHANGEME", DISCORD_APPLICATION_ID = "CHANGEME" }
+
+kv_namespaces = [
+  { binding = "STORAGE", id = "CHANGEME", preview_id = "CHANGEME" },
+]
