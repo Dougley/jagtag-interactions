@@ -11,3 +11,12 @@ vars = { DISCORD_NACL_PUBLIC_KEY = "CHANGEME", DISCORD_APPLICATION_ID = "CHANGEM
 kv_namespaces = [
   { binding = "STORAGE", id = "CHANGEME", preview_id = "CHANGEME" },
 ]
+
+[build]
+upload_format = "service-worker"
+command = "npm install && npm run build"
+cwd = "."
+watch_dir = "src"
+upload_dir = "dist"
+upload_include = []
+upload_exclude = []
