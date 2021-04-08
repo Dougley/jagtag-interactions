@@ -1,8 +1,8 @@
-import { APIInteraction, APIInteractionResponseType, Snowflake } from 'discord-api-types/v8'
+import { APIInteraction, InteractionResponseType, Snowflake } from 'discord-api-types/v8'
 
 export const callback = (msg: string | object, ephemeral: Boolean = false) => {
   return new Response(JSON.stringify({
-    type: APIInteractionResponseType.ChannelMessageWithSource,
+    type: InteractionResponseType.ChannelMessageWithSource,
     data: {
       ...((typeof msg === 'string') ? { content: msg } : msg),
       allowed_mentions: {
@@ -15,7 +15,7 @@ export const callback = (msg: string | object, ephemeral: Boolean = false) => {
 
 export const defer = () => {
   return new Response(JSON.stringify({
-    type: APIInteractionResponseType.AcknowledgeWithSource
+    type: InteractionResponseType.DeferredChannelMessageWithSource
   }))
 }
 

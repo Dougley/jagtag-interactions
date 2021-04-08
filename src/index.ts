@@ -1,6 +1,6 @@
 /* eslint-disable node/no-callback-literal */
 import { sign } from 'tweetnacl'
-import { APIInteraction, InteractionType, APIInteractionResponseType } from 'discord-api-types/v8'
+import { InteractionType, InteractionResponseType, APIGuildInteraction } from 'discord-api-types/v8'
 import { Buffer } from 'buffer/index'
 import { callback } from './util/interactions'
 import Parser from '@thesharks/jagtag-js'
@@ -16,8 +16,8 @@ async function handleRequest (request: Request): Promise<any> {
     if (request.method !== 'POST') return Response.redirect('https://dougley.com')
     const body = await request.text()
     if (await checkSecurityHeaders(request, body)) {
-      const ctx = JSON.parse(body) as APIInteraction
-      if (ctx.type === InteractionType.Ping) return new Response(JSON.stringify({ type: APIInteractionResponseType.Pong }))
+      const ctx = JSON.parse(body) as APIGuildInteraction // guaranteed for my usecase
+      if (ctx.type === InteractionType.Ping) return new Response(JSON.stringify({ type: InteractionResponseType.Pong }))
       if (ctx.data?.name === 'tag') { // pretty much guaranteed, but you never know
         const options: any = ctx.data?.options ? ctx.data?.options[0] : []
         switch (options.name) {
@@ -32,7 +32,10 @@ async function handleRequest (request: Request): Promise<any> {
           case 'show': {
             const value = await STORAGE.get(`tag:${options.options.find((x: any) => x.name === 'name').value}`)
             if (!value) return callback('No tag with that name', true)
-            return callback(Parser(value))
+            return callback(Parser(value, {
+              tagArgs: options.options.find((x: any) => x.name === 'args').value.split(' '),
+              user: ctx.member
+            }))
           }
         }
       }
