@@ -33,8 +33,8 @@ async function handleRequest (request: Request): Promise<any> {
             const value = await STORAGE.get(`tag:${options.options.find((x: any) => x.name === 'name').value}`)
             if (!value) return callback('No tag with that name', true)
             return callback(Parser(value, {
-              tagArgs: options.options.find((x: any) => x.name === 'args').value.split(' '),
-              user: ctx.member
+              tagArgs: options.options.find((x: any) => x.name === 'args')?.value.split(' ') ?? [],
+              user: ctx.member.user
             }))
           }
         }
