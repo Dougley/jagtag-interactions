@@ -10,13 +10,21 @@ export const callback = (msg: string | object, ephemeral: Boolean = false) => {
       },
       ...(ephemeral ? { flags: 64 } : {})
     }
-  }))
+  }), {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
 }
 
 export const defer = () => {
   return new Response(JSON.stringify({
     type: InteractionResponseType.DeferredChannelMessageWithSource
-  }))
+  }), {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
 }
 
 export const editCallback = async (ctx: APIInteraction, msg: string | object) => {

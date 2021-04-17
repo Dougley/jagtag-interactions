@@ -17,7 +17,13 @@ async function handleRequest (request: Request): Promise<any> {
     const body = await request.text()
     if (await checkSecurityHeaders(request, body)) {
       const ctx = JSON.parse(body) as APIGuildInteraction // guaranteed for my usecase
-      if (ctx.type === InteractionType.Ping) return new Response(JSON.stringify({ type: InteractionResponseType.Pong }))
+      if (ctx.type === InteractionType.Ping) {
+        return new Response(JSON.stringify({ type: InteractionResponseType.Pong }), {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+      }
       if (ctx.data?.name === 'tag') { // pretty much guaranteed, but you never know
         const options: any = ctx.data?.options ? ctx.data?.options[0] : []
         switch (options.name) {
