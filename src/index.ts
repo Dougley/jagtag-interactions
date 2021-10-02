@@ -1,8 +1,8 @@
 /* eslint-disable node/no-callback-literal */
 import { sign } from 'tweetnacl'
-import { InteractionType, InteractionResponseType, APIGuildInteraction } from 'discord-api-types/v8'
+import { InteractionType, InteractionResponseType, APIInteraction, APIChatInputApplicationCommandInteractionData } from 'discord-api-types/v9'
 import { Buffer } from 'buffer/index'
-import { callback } from './util/interactions'
+import { callback, createAutocompleteReply } from './util/interactions'
 import Parser from '@thesharks/jagtag-js'
 import Router from './util/router'
 
@@ -13,35 +13,43 @@ addEventListener('fetch', async (event) => {
 async function handleRequest (request: Request): Promise<any> {
   const r = new Router()
   r.post('/', async (request: Request) => {
-    if (request.method !== 'POST') return Response.redirect('https://dougley.com')
     const body = await request.text()
     if (await checkSecurityHeaders(request, body)) {
-      const ctx = JSON.parse(body) as APIGuildInteraction // guaranteed for my usecase
-      if (ctx.type === InteractionType.Ping) {
-        return new Response(JSON.stringify({ type: InteractionResponseType.Pong }), {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-      }
-      if (ctx.data?.name === 'tag') { // pretty much guaranteed, but you never know
-        const options: any = ctx.data?.options ? ctx.data?.options[0] : []
-        switch (options.name) {
-          case 'create': {
-            await STORAGE.put(`tag:${options.options.find((x: any) => x.name === 'name').value}`, options.options.find((x: any) => x.name === 'content').value)
-            return callback('Tag created!')
-          }
-          case 'remove': {
-            await STORAGE.delete(`tag:${options.options.find((x: any) => x.name === 'name').value}`)
-            return callback('Tag deleted!')
-          }
-          case 'show': {
-            const value = await STORAGE.get(`tag:${options.options.find((x: any) => x.name === 'name').value}`)
-            if (!value) return callback('No tag with that name', true)
-            return callback(Parser(value, {
-              tagArgs: options.options.find((x: any) => x.name === 'args')?.value.split(' ') ?? [],
-              user: ctx.member.user
-            }))
+      const ctx = JSON.parse(body) as APIInteraction
+      switch (ctx.type) {
+        case InteractionType.Ping:
+          return new Response(JSON.stringify({ type: InteractionResponseType.Pong }), {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+        // @ts-expect-error - undocumented officially as of now
+        case 4: { // APPLICATION_COMMAND_AUTOCOMPLETE
+          // @ts-expect-error - again, undocumented
+          const values = await STORAGE.list({ prefix: `tag:${ctx.data.options[0].options[0].value}` })
+          return await createAutocompleteReply(values.keys.map(x => x.name.slice(4)).map(x => ({ name: x, value: x })))
+        }
+        case InteractionType.ApplicationCommand: {
+          if (ctx.data.name === 'tag') {
+            const data = ctx.data as APIChatInputApplicationCommandInteractionData
+            const options: any = (data.options != null) ? data.options[0] : []
+            switch (options.name) {
+              case 'create': {
+                await STORAGE.put(`tag:${options.options.find((x: any) => x.name === 'name').value}`, options.options.find((x: any) => x.name === 'content').value)
+                return callback('Tag created!')
+              }
+              case 'remove': {
+                await STORAGE.delete(`tag:${options.options.find((x: any) => x.name === 'name').value}`)
+                return callback('Tag deleted!')
+              }
+              case 'show': {
+                const value = await STORAGE.get(`tag:${options.options.find((x: any) => x.name === 'name').value}`)
+                if (!value) return callback('No tag with that name', true)
+                return callback(Parser(value, {
+                  tagArgs: options.options.find((x: any) => x.name === 'args')?.value.split(' ') ?? []
+                }))
+              }
+            }
           }
         }
       }

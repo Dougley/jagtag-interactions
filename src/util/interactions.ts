@@ -28,7 +28,7 @@ export const defer = () => {
 }
 
 export const editCallback = async (ctx: APIInteraction, msg: string | object) => {
-  return fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/@original`, {
+  return await fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/@original`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json'
@@ -45,13 +45,13 @@ export const editCallback = async (ctx: APIInteraction, msg: string | object) =>
 }
 
 export const deleteCallback = async (ctx: APIInteraction) => {
-  return fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/@original`, {
+  return await fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/@original`, {
     method: 'DELETE'
   })
 }
 
 export const createMessage = async (ctx: APIInteraction, msg: string | object) => {
-  return fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}`, {
+  return await fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -66,13 +66,13 @@ export const createMessage = async (ctx: APIInteraction, msg: string | object) =
 }
 
 export const deleteMessage = async (ctx: APIInteraction, msg: Snowflake) => {
-  return fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/${msg}`, {
+  return await fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/${msg}`, {
     method: 'DELETE'
   })
 }
 
 export const editMessage = async (ctx: APIInteraction, id: Snowflake, msg: string | object) => {
-  return fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/${id}`, {
+  return await fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/${id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -83,5 +83,18 @@ export const editMessage = async (ctx: APIInteraction, id: Snowflake, msg: strin
         parse: []
       }
     })
+  })
+}
+
+export const createAutocompleteReply = async (choices: Array<{name: string, value: string}>) => {
+  return new Response(JSON.stringify({
+    type: 8, // APPLICATION_COMMAND_AUTOCOMPLETE_RESULT
+    data: {
+      choices
+    }
+  }), {
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
 }

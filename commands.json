@@ -13,7 +13,8 @@
                         "type": 3,
                         "name": "name",
                         "description": "Name of the tag",
-                        "required": true
+                        "required": true,
+                        "autocomplete": true
                     }
                 ]
             },
@@ -26,7 +27,8 @@
                         "type": 3,
                         "name": "name",
                         "description": "Name of the tag",
-                        "required": true
+                        "required": true,
+                        "autocomplete": true
                     },
                     {
                         "type": 3,
