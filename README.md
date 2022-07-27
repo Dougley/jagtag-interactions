@@ -14,5 +14,6 @@ First off, copy `wrangler.toml.example` to `wrangler.toml` and set assosiated va
 
 If you haven't already, install [Wrangler](https://developers.cloudflare.com/workers/cli-wrangler/install-update)
 
-If you're running Wrangler version v1.15.0 or above, just run `wrangler publish`.
-If not, run `npm run deploy`
+> This project requires Wrangler v2.0.x or up
+
+When you've done that, just run `wrangler publish`.
