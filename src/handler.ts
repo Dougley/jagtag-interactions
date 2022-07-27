@@ -97,6 +97,6 @@ router.get('/', async (req, env: Enviroment) => {
   const data = await env.STORAGE.list({ prefix: 'tag:' })
   return new Response(
     data.keys.map(x => x.name).join('\n'),
-    { status: 200, headers: { 'Content-Type': 'application/json' } }
+    { status: 200, headers: { 'Content-Type': 'text/plain' } }
   )
 })
