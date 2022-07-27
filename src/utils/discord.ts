@@ -1,4 +1,4 @@
-import { APIInteraction, InteractionResponseType, Snowflake } from 'discord-api-types/v8'
+import { APIInteraction, InteractionResponseType, Snowflake, Routes } from 'discord-api-types/v10'
 
 export const callback = (msg: string | object, ephemeral: Boolean = false) => {
   return new Response(JSON.stringify({
@@ -28,7 +28,7 @@ export const defer = () => {
 }
 
 export const editCallback = async (ctx: APIInteraction, msg: string | object) => {
-  return await fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/@original`, {
+  return await fetch(Routes.webhookMessage(ctx.application_id, '@original'), {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json'
@@ -45,13 +45,13 @@ export const editCallback = async (ctx: APIInteraction, msg: string | object) =>
 }
 
 export const deleteCallback = async (ctx: APIInteraction) => {
-  return await fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/@original`, {
+  return await fetch(Routes.webhookMessage(ctx.application_id, '@original'), {
     method: 'DELETE'
   })
 }
 
 export const createMessage = async (ctx: APIInteraction, msg: string | object) => {
-  return await fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}`, {
+  return await fetch(Routes.webhook(ctx.application_id, ctx.token), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -66,13 +66,13 @@ export const createMessage = async (ctx: APIInteraction, msg: string | object) =
 }
 
 export const deleteMessage = async (ctx: APIInteraction, msg: Snowflake) => {
-  return await fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/${msg}`, {
+  return await fetch(Routes.webhookMessage(ctx.application_id, msg), {
     method: 'DELETE'
   })
 }
 
 export const editMessage = async (ctx: APIInteraction, id: Snowflake, msg: string | object) => {
-  return await fetch(`https://discord.com/api/v8/webhooks/${DISCORD_APPLICATION_ID}/${ctx.token}/messages/${id}`, {
+  return await fetch(Routes.webhookMessage(ctx.application_id, id), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -88,7 +88,7 @@ export const editMessage = async (ctx: APIInteraction, id: Snowflake, msg: strin
 
 export const createAutocompleteReply = async (choices: Array<{name: string, value: string}>) => {
   return new Response(JSON.stringify({
-    type: 8, // APPLICATION_COMMAND_AUTOCOMPLETE_RESULT
+    type: InteractionResponseType.ApplicationCommandAutocompleteResult,
     data: {
       choices
     }

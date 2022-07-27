@@ -1,19 +1,16 @@
+main = "src/index.ts"
 name = "jagtag"
-type = "javascript"
-account_id = ""
 workers_dev = true
-route = ""
-zone_id = ""
-webpack_config = "webpack.config.js"
 
-vars = { DISCORD_NACL_PUBLIC_KEY = "CHANGEME", DISCORD_APPLICATION_ID = "CHANGEME" }
+[vars]
+DISCORD_NACL_PUBLIC_KEY = "CHANGEME"
+SENTRY_DSN = "CHANGEME"
 
-kv_namespaces = [
-  { binding = "STORAGE", id = "CHANGEME", preview_id = "CHANGEME" },
-]
+[[kv_namespaces]]
+  binding = "STORAGE"
+  id = "CHANGEME"
+  preview_id = "CHANGEME"
 
-[build]
-upload.format = "service-worker"
-command = "npm install && npm run build"
-cwd = "."
-watch_dir = "src"
+[[rules]]
+type = "ESModule"
+globs = [ "**/*.ts" ]
